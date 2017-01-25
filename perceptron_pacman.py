@@ -42,12 +42,17 @@ class PerceptronClassifierPacman(PerceptronClassifier):
 
 
     def train( self, trainingData, trainingLabels, validationData, validationLabels ):
-        self.features = trainingData[0][0]['Stop'].keys() # could be useful later
-        # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
-        # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
+		self.features = trainingData[0][0]['Stop'].keys() # could be useful later
+		# DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
+		# THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
 
-        for iteration in range(self.max_iterations):
-            print "Starting iteration ", iteration, "..."
-            for i in range(len(trainingData)):
-                "*** YOUR CODE HERE ***"
-                util.raiseNotDefined()
+		for iteration in range(self.max_iterations):
+			print "Starting iteration ", iteration, "..."
+			for i in range(len(trainingData)):
+				"*** YOUR CODE HERE ***"
+				datum = trainingData[i]
+				guess = self.classify([datum])[0]
+				dataLabel = trainingLabels[i]
+				if guess != dataLabel:
+					self.weights += datum[0][dataLabel]
+					self.weights -= datum[0][guess]

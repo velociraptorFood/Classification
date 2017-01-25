@@ -65,22 +65,21 @@ def basicFeatureExtractorFace(datum):
     return features
 
 def enhancedFeatureExtractorDigit(datum):
-    """
-    Your feature extraction playground.
+	"""
+	Your feature extraction playground.
 
-    You should return a util.Counter() of features
-    for this datum (datum is of type samples.Datum).
+	You should return a util.Counter() of features
+	for this datum (datum is of type samples.Datum).
 
-    ## DESCRIBE YOUR ENHANCED FEATURES HERE...
+	## DESCRIBE YOUR ENHANCED FEATURES HERE...
 
-    ##
-    """
-    features =  basicFeatureExtractorDigit(datum)
+	##
+	"""
+	features =  basicFeatureExtractorDigit(datum)
 
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+	"*** YOUR CODE HERE ***"
 
-    return features
+	return features
 
 
 
@@ -118,14 +117,33 @@ def enhancedFeatureExtractorPacman(state):
     return features, state.getLegalActions()
 
 def enhancedPacmanFeatures(state, action):
-    """
-    For each state, this function is called with each legal action.
-    It should return a counter with { <feature name> : <feature value>, ... }
-    """
-    features = util.Counter()
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-    return features
+	"""
+	For each state, this function is called with each legal action.
+	It should return a counter with { <feature name> : <feature value>, ... }
+	"""
+	features = util.Counter()
+	"*** YOUR CODE HERE ***"
+	
+	state = state.generateSuccessor(0, action)
+	pmLocation = state.getPacmanPosition()
+	
+	features['availableFood'] = state.getNumFood()
+	
+	foodLocation = state.getFood().asList()
+	foodDist = 0
+	if foodLocation:
+		foodDist = min([util.manhattanDistance(pmLocation, food) for food in foodLocation])
+	foodDist = 10.0/foodDist if foodDist else foodDist
+	features['closestFood'] = foodDist
+	
+	ghostLocations = state.getGhostPositions()
+	ghostDist = 0
+	if ghostLocations:
+		ghostDist = min(util.manhattanDistance(ghostLoc, pmLocation) for ghostLoc in ghostLocations)
+	ghostDist = 10.0/ghostDist if ghostDist else ghostDist
+	features['closestGhost'] = ghostDist
+	
+	return features
 
 
 def contestFeatureExtractorDigit(datum):
