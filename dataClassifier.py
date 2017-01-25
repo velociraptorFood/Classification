@@ -79,6 +79,72 @@ def enhancedFeatureExtractorDigit(datum):
 
 	"*** YOUR CODE HERE ***"
 
+	w = DIGIT_DATUM_WIDTH
+	h = DIGIT_DATUM_HEIGHT
+	active = topleft = topright = bottomleft = bottomright = 0
+	enclosedH = 0
+	enclosedV = 0
+	firstX = w 
+	lastX = 0
+	firstY = h 
+	lastY = 0
+	
+	previous = None
+	counter = 1
+	for x in range(w):
+		for y in range(h):
+			p = datum.getPixel(x, y)
+			if previous != None and p != previous and x == prevX:
+				if counter % 2 == 0:
+					enclosedH += 1
+				counter += 1
+			if p > 0:
+				if firstX == w:
+					firstX = x
+				if y < firstY:
+					firstY = y
+				elif y > lastY:
+					lastY = y
+				if x > lastX:
+					lastX = x
+				active += 1
+				if y <= (h / 2.0) and x <= (w / 2.0):
+					topleft += 1
+				elif y <= (h / 2.0) and x > (w / 2.0):
+					topright += 1
+				elif y > (h / 2.0) and x <= (w / 2.0):
+					bottomleft += 1
+				elif y > (h / 2.0) and x > (w / 2.0): 
+					bottomright += 1
+			previous = p
+			prevX = x
+		
+	previous = None
+	counter = 1
+	for y in range(h):
+		for x in range(w):
+			p = datum.getPixel(x, y)
+			if previous != None and p != previous and y == prevY:
+				if counter % 2 == 0:
+					enclosedV += 1
+				counter += 1
+			previous = p
+			prevY = y
+			
+	nrWidth = lastX - firstX
+	nrHeight = lastY - firstY
+	
+	features['activePixels'] =  active 
+	features['topleft'] = topleft 
+	features['topright'] = topright
+	features['bottomleft'] = bottomleft
+	features['bottomright'] = bottomright
+	features['enclosedH'] = enclosedH > 50
+	features['enclosedV'] = enclosedV > 50
+	features['enclosedHV'] = abs(enclosedH - enclosedV) > 10
+	features['width'] = nrWidth	< 12
+	features['height'] = nrHeight < 19
+	
 	return features
 
 
@@ -86,7 +152,6 @@ def enhancedFeatureExtractorDigit(datum):
 def basicFeatureExtractorPacman(state):
     """
     A basic feature extraction function.
-
     You should return a util.Counter() of features
     for each (state, action) pair along with a list of the legal actions
 
@@ -162,38 +227,38 @@ def enhancedFeatureExtractorFace(datum):
     return features
 
 def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage):
-    """
-    This function is called after learning.
-    Include any code that you want here to help you analyze your results.
+	"""
+	This function is called after learning.
+	Include any code that you want here to help you analyze your results.
 
-    Use the printImage(<list of pixels>) function to visualize features.
+	Use the printImage(<list of pixels>) function to visualize features.
 
-    An example of use has been given to you.
+	An example of use has been given to you.
 
-    - classifier is the trained classifier
-    - guesses is the list of labels predicted by your classifier on the test set
-    - testLabels is the list of true labels
-    - testData is the list of training datapoints (as util.Counter of features)
-    - rawTestData is the list of training datapoints (as samples.Datum)
-    - printImage is a method to visualize the features
-    (see its use in the odds ratio part in runClassifier method)
+	- classifier is the trained classifier
+	- guesses is the list of labels predicted by your classifier on the test set
+	- testLabels is the list of true labels
+	- testData is the list of training datapoints (as util.Counter of features)
+	- rawTestData is the list of training datapoints (as samples.Datum)
+	- printImage is a method to visualize the features
+	(see its use in the odds ratio part in runClassifier method)
 
-    This code won't be evaluated. It is for your own optional use
-    (and you can modify the signature if you want).
-    """
+	This code won't be evaluated. It is for your own optional use
+	(and you can modify the signature if you want).
+	"""
 
-    # Put any code here...
-    # Example of use:
-    # for i in range(len(guesses)):
-    #     prediction = guesses[i]
-    #     truth = testLabels[i]
-    #     if (prediction != truth):
-    #         print "==================================="
-    #         print "Mistake on example %d" % i
-    #         print "Predicted %d; truth is %d" % (prediction, truth)
-    #         print "Image: "
-    #         print rawTestData[i]
-    #         break
+	# Put any code here...
+	# Example of use:
+	for i in range(len(guesses)):
+		 prediction = guesses[i]
+		 truth = testLabels[i]
+		 if (prediction != truth):
+			 print "==================================="
+			 print "Mistake on example %d" % i
+			 print "Predicted %d; truth is %d" % (prediction, truth)
+			 print "Image: "
+			 print rawTestData[i]
+			 break
 
 
 ## =====================
